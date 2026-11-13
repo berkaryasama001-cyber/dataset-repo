@@ -1,0 +1,4 @@
+/database/
+.env
+uploads/*.csv
+uploads/*.sql
