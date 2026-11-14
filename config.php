@@ -62,23 +62,20 @@ session_start();
 // }
 
 // cara 3
+// config.php - Koneksi database aman menggunakan constructor mysqli
+$host     = $_ENV['MYSQLHOST'] ?? $_ENV['MYSQL_HOST'] ?? 'localhost';
+$user     = $_ENV['MYSQLUSER'] ?? $_ENV['MYSQL_USER'] ?? 'root';
+$password = $_ENV['MYSQLPASSWORD'] ?? $_ENV['MYSQL_PASSWORD'] ?? '';
+$database = $_ENV['MYSQLDATABASE'] ?? $_ENV['MYSQL_DATABASE'] ?? 'railway';
+$port     = (int)($_ENV['MYSQLPORT'] ?? $_ENV['MYSQL_PORT'] ?? 3306);
 
-    $host     = $_ENV['MYSQLHOST'] ?? $_ENV['MYSQL_HOST'] ?? 'localhost';
-    $user     = $_ENV['MYSQLUSER'] ?? $_ENV['MYSQL_USER'] ?? 'root';
-    $password = $_ENV['MYSQLPASSWORD'] ?? $_ENV['MYSQL_PASSWORD'] ?? '';
-    $database = $_ENV['MYSQLDATABASE'] ?? $_ENV['MYSQL_DATABASE'] ?? 'railway';
-    $port     = $_ENV['MYSQLPORT'] ?? $_ENV['MYSQL_PORT'] ?? 3306;
+// Koneksi langsung via constructor untuk menghindari fungsi init yang terblokir
+$conn = @new mysqli($host, $user, $password, $database, $port);
 
-    // Inisialisasi koneksi mysqli langsung
-    $conn = mysqli_init();
+if ($conn->connect_error) {
+    http_response_code(500);
+    die("<h3>Koneksi Database Gagal</h3><p>" . $conn->connect_error . "</p>");
+}
 
-    // Hubungkan ke database dengan port integer
-    $connected = @mysqli_real_connect($conn, $host, $user, $password, $database, (int)$port);
-
-    if (!$connected) {
-        http_response_code(500);
-        die("<h3>Koneksi Database Gagal</h3><p>" . mysqli_connect_error() . "</p>");
-    }
-
-    mysqli_set_charset($conn, "utf8mb4");
+$conn->set_charset("utf8mb4");
 ?> 
