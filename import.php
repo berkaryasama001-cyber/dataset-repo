@@ -1,40 +1,51 @@
 <?php
-// Tampilkan pesan error jika ada kendala
-ini_set('display_errors', 1);
+// Tampilkan error secara transparan
 error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 require_once 'config.php';
 
 $filename = 'db_dataset_repo.sql';
 
 if (!file_exists($filename)) {
-    die("File SQL ($filename) tidak ditemukan di folder project!");
+    die("<h3 style='color:red;'>Error: File $filename tidak ditemukan!</h3>");
 }
 
-// Baca file SQL
-$sql_content = file_get_contents($filename);
+// Baca isi file SQL
+$content = file_get_contents($filename);
 
-// Pisahkan query berdasarkan titik koma (;) agar dieksekusi satu per satu dengan aman
-$queries = array_filter(array_map('trim', explode(';', $sql_content)));
+// Bersihkan komentar baris (-- ) dan blok komentar agar tidak mengganggu eksekusi
+$content = preg_replace('/--.*?\n/', "\n", $content);
+$content = preg_replace('/\/\*.*?\*\//s', '', $content);
 
-$success_count = 0;
-$fail_count = 0;
+// Pisahkan setiap perintah SQL berdasarkan titik koma (;)
+$queries = array_filter(array_map('trim', explode(';', $content)));
+
+$success = 0;
+$failed = 0;
+$errors = [];
 
 foreach ($queries as $query) {
     if (!empty($query)) {
         if ($conn->query($query) === TRUE) {
-            $success_count++;
+            $success++;
         } else {
-            $fail_count++;
+            $failed++;
+            $errors[] = $conn->error;
         }
     }
 }
 
-echo "<h1>Hasil Import Database ke Railway:</h1>";
-echo "<p>Berhasil mengeksekusi: <b>$success_count</b> perintah SQL.</p>";
-if ($fail_count > 0) {
-    echo "<p style='color:orange;'>Catatan: Ada $fail_count perintah dilewati (kemungkinan tabel sudah ada sebelumnya).</p>";
+echo "<h2>Hasil Import Database Railway:</h2>";
+echo "<p>Total perintah SQL dieksekusi: <b>$success</b></p>";
+
+if ($failed > 0) {
+    echo "<p style='color:orange;'>Perhatian: Ada $failed perintah yang gagal (kemungkinan tabel/data sudah ada sebelumnya).</p>";
+    echo "<details><summary>Lihat detail error</summary><pre>" . print_r($errors, true) . "</pre></details>";
+} else {
+    echo "<h3 style='color:green;'>SUKSES BESAR: Seluruh tabel (admin & datasets) beserta isinya berhasil di-import ke Railway!</h3>";
+    echo "<p>Data sampel Breast Cancer Wisconsin berhasil dimasukkan ke database.</p>";
 }
-echo "<h3 style='color:green;'>Status: Import Database Selesai!</h3>";
-echo "<p>Sekarang Anda bisa menghapus file <b>import.php</b> ini.</p>";
+
+echo "<hr><p><b>Langkah Terakhir:</b> Segera hapus file <b>import.php</b> ini dari project Anda demi keamanan.</p>";
 ?>
