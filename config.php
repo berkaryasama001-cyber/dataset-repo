@@ -1,8 +1,7 @@
 <?php
 // config.php - Konfigurasi koneksi database MySQL & fungsi helper di Railway
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+session_start();
+
 
 $host     = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
 $user     = getenv('MYSQLUSER') ?: 'root';
@@ -11,7 +10,7 @@ $database = getenv('MYSQLDATABASE') ?: 'railway';
 $port     = (int)(getenv('MYSQLPORT') ?: 3306);
 
 // Matikan laporan error otomatis agar tidak memicu Uncaught mysqli_sql_exception sebelum die()
-// mysqli_report(MYSQLI_REPORT_OFF);
+mysqli_report(MYSQLI_REPORT_OFF);
 
 $conn = @new mysqli($host, $user, $password, $database, $port);
 
