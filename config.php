@@ -1,5 +1,8 @@
 <?php
 // config.php - Konfigurasi koneksi database MySQL & fungsi helper di Railway
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 $host     = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
 $user     = getenv('MYSQLUSER') ?: 'root';

@@ -6,13 +6,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = sanitize($_POST['username']);
     $password = $_POST['password'];
 
-    // Login bawaan cepat (bisa diatur manual atau via DB)
+    // Cek kredensial admin
     if ($username === 'admin' && $password === 'admin123') {
         $_SESSION['admin_logged'] = true;
+        
+        // Pastikan session benar-benar ditulis sebelum redirect
+        session_write_close();
+        
         header("Location: dashboard.php");
         exit;
     } else {
-        $error = "Username atau password salah!";
+        $error = "Username atau password salah! (Input: $username)";
     }
 }
 ?>
