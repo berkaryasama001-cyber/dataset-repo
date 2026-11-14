@@ -62,21 +62,23 @@ session_start();
 // }
 
 // cara 3
-<?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+// config.php - Konfigurasi koneksi database Railway & Localhost
 
 $host     = $_ENV['MYSQLHOST'] ?? $_ENV['MYSQL_HOST'] ?? 'localhost';
 $user     = $_ENV['MYSQLUSER'] ?? $_ENV['MYSQL_USER'] ?? 'root';
 $password = $_ENV['MYSQLPASSWORD'] ?? $_ENV['MYSQL_PASSWORD'] ?? '';
 $database = $_ENV['MYSQLDATABASE'] ?? $_ENV['MYSQL_DATABASE'] ?? 'railway';
-$port     = (int)($_ENV['MYSQLPORT'] ?? $_ENV['MYSQL_PORT'] ?? 3306); $conn = @new mysqli($host, $user, $password, $database, $port);
+$port     = (int)($_ENV['MYSQLPORT'] ?? $_ENV['MYSQL_PORT'] ?? 3306);
 
+// Membuat koneksi menggunakan mysqli berorientasi objek
+$conn = @new mysqli($host, $user, $password, $database, $port);
+
+// Periksa apakah koneksi gagal
 if ($conn->connect_error) {
     http_response_code(500);
-    die("Koneksi Database Gagal: " . $conn->connect_error);
+    die("<h3>Koneksi Database Gagal</h3><p>Pastikan variabel environment di Railway sudah terhubung dengan benar.</p><p><strong>Detail Error:</strong> " . $conn->connect_error . "</p>");
 }
 
+// Atur charset UTF-8 agar data teks aman
 $conn->set_charset("utf8mb4");
 ?> 
