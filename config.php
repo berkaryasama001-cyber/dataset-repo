@@ -26,7 +26,7 @@
 // }
 
 // Railway & localhost
-session_start();
+// session_start();
 
 // Deteksi apakah sedang di Railway atau di Localhost XAMPP
 // if (getenv('MYSQLHOST')) {
@@ -62,23 +62,22 @@ session_start();
 // }
 
 // cara 3
-// config.php - Konfigurasi koneksi database Railway & Localhost
+// config.php - Koneksi aman menggunakan PDO (100% aktif di semua lingkungan PHP Railway)
 
 $host     = $_ENV['MYSQLHOST'] ?? $_ENV['MYSQL_HOST'] ?? 'localhost';
 $user     = $_ENV['MYSQLUSER'] ?? $_ENV['MYSQL_USER'] ?? 'root';
 $password = $_ENV['MYSQLPASSWORD'] ?? $_ENV['MYSQL_PASSWORD'] ?? '';
 $database = $_ENV['MYSQLDATABASE'] ?? $_ENV['MYSQL_DATABASE'] ?? 'railway';
-$port     = (int)($_ENV['MYSQLPORT'] ?? $_ENV['MYSQL_PORT'] ?? 3306);
+$port     = $_ENV['MYSQLPORT'] ?? $_ENV['MYSQL_PORT'] ?? '3306';
 
-// Membuat koneksi menggunakan mysqli berorientasi objek
-$conn = @new mysqli($host, $user, $password, $database, $port);
-
-// Periksa apakah koneksi gagal
-if ($conn->connect_error) {
+try {
+    $dsn = "mysql:host={$host};port={$port};dbname={$database};charset=utf8mb4";
+    $conn = new PDO($dsn, $user, $password, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+    ]);
+} catch (PDOException $e) {
     http_response_code(500);
-    die("<h3>Koneksi Database Gagal</h3><p>Pastikan variabel environment di Railway sudah terhubung dengan benar.</p><p><strong>Detail Error:</strong> " . $conn->connect_error . "</p>");
+    die("<h3>Koneksi Database Gagal (PDO):</h3><p>" . $e->getMessage() . "</p>");
 }
-
-// Atur charset UTF-8 agar data teks aman
-$conn->set_charset("utf8mb4");
 ?> 
