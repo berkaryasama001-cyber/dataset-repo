@@ -62,19 +62,20 @@ session_start();
 // }
 
 // cara 3
-// config.php - Koneksi database aman menggunakan constructor mysqli
+<?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 $host     = $_ENV['MYSQLHOST'] ?? $_ENV['MYSQL_HOST'] ?? 'localhost';
 $user     = $_ENV['MYSQLUSER'] ?? $_ENV['MYSQL_USER'] ?? 'root';
 $password = $_ENV['MYSQLPASSWORD'] ?? $_ENV['MYSQL_PASSWORD'] ?? '';
 $database = $_ENV['MYSQLDATABASE'] ?? $_ENV['MYSQL_DATABASE'] ?? 'railway';
-$port     = (int)($_ENV['MYSQLPORT'] ?? $_ENV['MYSQL_PORT'] ?? 3306);
-
-// Koneksi langsung via constructor untuk menghindari fungsi init yang terblokir
-$conn = @new mysqli($host, $user, $password, $database, $port);
+$port     = (int)($_ENV['MYSQLPORT'] ?? $_ENV['MYSQL_PORT'] ?? 3306); $conn = @new mysqli($host, $user, $password, $database, $port);
 
 if ($conn->connect_error) {
     http_response_code(500);
-    die("<h3>Koneksi Database Gagal</h3><p>" . $conn->connect_error . "</p>");
+    die("Koneksi Database Gagal: " . $conn->connect_error);
 }
 
 $conn->set_charset("utf8mb4");
