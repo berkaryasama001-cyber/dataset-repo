@@ -63,30 +63,22 @@ session_start();
 
 // cara 3
 
-// config.php - Konversi koneksi database otomatis untuk Railway & Localhost
+    $host     = $_ENV['MYSQLHOST'] ?? $_ENV['MYSQL_HOST'] ?? 'localhost';
+    $user     = $_ENV['MYSQLUSER'] ?? $_ENV['MYSQL_USER'] ?? 'root';
+    $password = $_ENV['MYSQLPASSWORD'] ?? $_ENV['MYSQL_PASSWORD'] ?? '';
+    $database = $_ENV['MYSQLDATABASE'] ?? $_ENV['MYSQL_DATABASE'] ?? 'railway';
+    $port     = $_ENV['MYSQLPORT'] ?? $_ENV['MYSQL_PORT'] ?? 3306;
 
-$host     = $_ENV['MYSQLHOST'] ?? $_ENV['MYSQL_HOST'] ?? 'localhost';
-$user     = $_ENV['MYSQLUSER'] ?? $_ENV['MYSQL_USER'] ?? 'root';
-$password = $_ENV['MYSQLPASSWORD'] ?? $_ENV['MYSQL_PASSWORD'] ?? '';
-$database = $_ENV['MYSQLDATABASE'] ?? $_ENV['MYSQL_DATABASE'] ?? 'dataset_db';
-$port     = $_ENV['MYSQLPORT'] ?? $_ENV['MYSQL_PORT'] ?? 3306;
+    // Inisialisasi koneksi mysqli langsung
+    $conn = mysqli_init();
 
-// Matikan error reporting bawaan agar pesan error tampil bersih jika gagal
-mysqli_report(MYSQLI_REPORT_OFF);
+    // Hubungkan ke database dengan port integer
+    $connected = @mysqli_real_connect($conn, $host, $user, $password, $database, (int)$port);
 
-$conn = mysqli_init();
+    if (!$connected) {
+        http_response_code(500);
+        die("<h3>Koneksi Database Gagal</h3><p>" . mysqli_connect_error() . "</p>");
+    }
 
-// Menghubungkan ke MySQL dengan port dinamis
-$connected = @mysqli_real_connect($conn, $host, $user, $password, $database, (int)$port);
-
-if (!$connected) {
-    // Jika koneksi gagal, tampilkan informasi diagnostik yang jelas
-    http_response_code(500);
-    die("<h3>Koneksi Database Gagal</h3>" .
-        "<p><strong>Error:</strong> " . mysqli_connect_error() . "</p>" .
-        "<p>Pastikan variabel environment di Railway sudah terhubung dengan benar ke service MySQL.</p>");
-}
-
-// Set charset UTF-8
-mysqli_set_charset($conn, "utf8mb4");
+    mysqli_set_charset($conn, "utf8mb4");
 ?> 
