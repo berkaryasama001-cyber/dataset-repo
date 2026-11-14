@@ -1,4 +1,5 @@
 /database/
 .env
-uploads/*.csv
-uploads/*.sql
+# uploads/*.csv
+# uploads/*.sql
+uploads/*

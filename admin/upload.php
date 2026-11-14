@@ -32,6 +32,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $new_filename = time() . '_' . preg_replace("/[^a-zA-Z0-9.]/", "_", $file_name);
         $target_dir   = "../uploads/" . $new_filename;
 
+            if (in_array($ext, $allowed)) {
+        // Pastikan folder uploads ada dan bisa ditulis (writable)
+        $upload_folder = "../uploads";
+        if (!is_dir($upload_folder)) {
+            mkdir($upload_folder, 0777, true);
+        }
+
+        $new_filename = time() . '_' . preg_replace("/[^a-zA-Z0-9.]/", "_", $file_name);
+        $target_dir   = $upload_folder . "/" . $new_filename;
+
+        if (move_uploaded_file($file_tmp, $target_dir)) {
+            // ... kode INSERT INTO datasets Anda tetap sama ...
+
+
         if (move_uploaded_file($file_tmp, $target_dir)) {
             $conn->query("INSERT INTO datasets (title, description, category, file_format, file_path, file_size, row_count) 
                           VALUES ('$title', '$description', '$category', '$file_format', '$new_filename', '$file_size', $row_count)");
