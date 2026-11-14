@@ -5,6 +5,9 @@ $password = 'yfjedrGuaUNWQJmwdykySHwQETAkZChy'; // salin nilai dari MYSQLPASSWOR
 $database = 'railway';                // sesuai nilai MYSQLDATABASE / MYSQL_DATABASE
 $port     = (int)'3306';              // sesuai nilai MYSQLPORT
 
+// Matikan laporan error otomatis agar tidak memicu Uncaught mysqli_sql_exception sebelum die()
+mysqli_report(MYSQLI_REPORT_OFF);
+
 $conn = @new mysqli($host, $user, $password, $database, $port);
 
 if ($conn->connect_error) {
