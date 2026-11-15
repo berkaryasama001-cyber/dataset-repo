@@ -60,6 +60,20 @@ $result = $conn->query("SELECT * FROM datasets ORDER BY created_at DESC");
             background: #f1f3f5;
             font-weight: 600;
         }
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 4px;
+            display: inline-block;
+        }
+        .btn-warning:hover {
+            background: #e0a800;
+        }
         .btn-danger {
             background: #dc3545;
             color: white;
@@ -67,6 +81,7 @@ $result = $conn->query("SELECT * FROM datasets ORDER BY created_at DESC");
             border-radius: 4px;
             text-decoration: none;
             font-size: 0.8rem;
+            display: inline-block;
         }
         .btn-danger:hover {
             background: #bb2d3b;
@@ -116,7 +131,8 @@ $result = $conn->query("SELECT * FROM datasets ORDER BY created_at DESC");
                         <td><?php echo $row['downloads']; ?>x</td>
                         <td>⭐ <?php echo ($row['rating_count'] > 0) ? number_format($row['rating_sum'] / $row['rating_count'], 1) : '0.0'; ?></td>
                         <td><?php echo date("d/m/Y", strtotime($row['created_at'])); ?></td>
-                        <td>
+                        <td style="white-space: nowrap;">
+                            <a href="update.php?id=<?php echo $row['id']; ?>" class="btn-warning">Edit</a>
                             <a href="dashboard.php?delete=<?php echo $row['id']; ?>" class="btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus dataset ini?');">Hapus</a>
                         </td>
                     </tr>
